@@ -10,7 +10,7 @@
     <title>Starter Template · Bootstrap</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'templates.css' %}">
+    <link rel="stylesheet" href="{% static 'template.css' %}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
   </head>
@@ -134,7 +134,27 @@
     <button type="submit" class="btn btn-primary">Search</button>
   </form>
 
+  <hr>
 
+  <div class="row">
+    <ul>
+      {% for journal in queryset %}
+        <li>
+          {{ journal.title }}
+          <span>Author: {{ journal.author.name }}</span>
+          <span>
+            {% for cat in journal.categories.all %}
+              {{ cat }}
+            {% endfor %}
+          </span>
+          <span>Publish date: {{ journal.publish_date }}</span>
+          <span>View count: {{ journal.views }}</span>
+          <span>Reviewed: {{ journal.reviewed }}</span>
+        </li>
+        <hr>
+      {% endfor %}
+    </ul>
+  </div>
 
 
 </main><!-- /.container -->
