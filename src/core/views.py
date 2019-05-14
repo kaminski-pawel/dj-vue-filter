@@ -19,7 +19,7 @@ def filter(request):
     view_count_max_query = request.GET.get('view_count_max')
     date_min_query = request.GET.get('date_min')
     date_max_query = request.GET.get('date_max')
-    category_query = request.GET.get('category')
+    categories_query = request.GET.get('categories')
     reviewed_query = request.GET.get('reviewed')
     not_reviewed_query = request.GET.get('notReviewed')
 
@@ -46,8 +46,8 @@ def filter(request):
     if is_valid_queryparam(date_max_query):
         qs = qs.filter(publish_date__lt=date_max_query)
 
-    if is_valid_queryparam(category_query) and category_query != 'Choose...':
-        qs = qs.filter(categories__name=category_query)
+    if is_valid_queryparam(categories_query) and categories_query != ' ':
+        qs = qs.filter(categories__name=categories_query)
 
     if reviewed_query == 'on':
         qs = qs.filter(reviewed=True)
