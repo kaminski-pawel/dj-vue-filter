@@ -1,6 +1,7 @@
 <template>
   <div class="hello">
   <main role="main" class="container">
+
     <h3>Filter Journals</h3>
     <form method="GET" action=".">
       <div class="form-row">
@@ -83,20 +84,20 @@
       <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
-
     <hr>
     <div class="row">
+      <div class="spinner-border" role="status" v-if="loading">
+        <span class="sr-only">Loading...</span>
+      </div>
       <ul>
           <li v-for="journal in queryset">
             {{ journal.title }}
             <span>Author: {{ journal.author.name }}</span>
-            <span>
-              {% for cat in journal.categories.all %}
+            <span v-for="cat in journal.categories">
                 {{ cat }}
-              {% endfor %}
             </span>
-            <span>Publish date: {{ journal.publish_date }}</span>
-            <span>View count: {{ journal.views }}</span>
+            <span>Publish date: {{ journal.publish_date | formatDate }} </span>
+            <span>View count: {{ journal.views }} </span>
             <span>Reviewed: {{ journal.reviewed }}</span>
           </li>
           <hr>
@@ -108,13 +109,34 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'DynForm',
   data(){
     return {
-      categories: ['aaaaa', 'bbbb'],
-      queryset: {},
+      categories: ['Sport', 'Lifestyle', 'Music', 'Coding', 'Travelling'],
+      queryset: [],
+      loading: false,
+      state: {
+        results: [],
+        loading: false,
+        error: null
+      }
     }
+  },
+  filters: {
+    formatDate(value){
+      return value.split('T')[0]
+    }
+  },
+  mounted(){
+    this.loading = true
+    axios.get('http://127.0.0.1:8000/api/')
+      .then(response => {
+        this.loading = false
+        this.queryset = response.data
+      })
+      .catch(error => console.log(error))
   }
 }
 </script>

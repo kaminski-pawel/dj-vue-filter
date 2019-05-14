@@ -1,17 +1,17 @@
 from django.db.models import Q
 from django.shortcuts import render
+from rest_framework import generics
 
 from .models import Journal, Category
+from .serializers import JournalSerializer
 
 
 def is_valid_queryparam(param):
     return param != '' and param is not None
 
 
-def BootstrapFilterView(request):
+def filter(request):
     qs = Journal.objects.all()
-    categories = Category.objects.all()
-
     title_contains_query = request.GET.get('title_contains')
     id_exact_query = request.GET.get('id_exact')
     title_or_author_query = request.GET.get('title_or_author')
@@ -55,9 +55,20 @@ def BootstrapFilterView(request):
     if not_reviewed_query == 'on':
         qs = qs.filter(reviewed=False)
 
+    return qs
 
+def BootstrapFilterView(request):
+    qs = filter(request)
     context = {
         'queryset': qs,
-        'categories': categories,
+        'categories': Category.objects.all(),
     }
     return render(request, 'bootstrap_form.html', context)
+
+
+class VueFilterView(generics.ListAPIView):
+    serializer_class = JournalSerializer
+
+    def get_queryset(self):
+        qs = filter(self.request)
+        return qs
