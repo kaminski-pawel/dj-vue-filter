@@ -96,23 +96,26 @@
 
     <hr>
     <div class="row">
-      <div class="spinner-border" role="status" v-if="loading">
-        <span class="sr-only">Loading...</span>
-      </div>
       <ul>
           <li v-for="journal in queryset">
-            <b>{{ journal.title }}</b>
-            <span>Author: {{ journal.author }} </span>
+            <b>{{ journal.title }}| </b>
+            <span>Author: {{ journal.author }} | </span>
             <span>Category: </span>
             <span v-for="cat in journal.categories">
                 {{ cat }}
             </span>
-            <span>Publish date: {{ journal.publish_date | formatDate }} </span>
-            <span>View count: {{ journal.views }} </span>
+            <span>| Publish date: {{ journal.publish_date | formatDate }} | </span>
+            <span>View count: {{ journal.views }} | </span>
             <span>Reviewed: {{ journal.reviewed }}</span>
           </li>
           <hr>
       </ul>
+    </div>
+    <div class="spinner-border" role="status" v-if="loading">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <div class="alert alert-danger" v-if="error_msg" role="alert">
+      {{ error_msg }}
     </div>
 
   </main>
@@ -128,11 +131,8 @@ export default {
       categories: ['Sport', 'Lifestyle', 'Music', 'Coding', 'Travelling'],
       queryset: [],
       loading: false,
-      state: {
-        results: [],
-        loading: false,
-        error: null
-      },
+      error_msg: '',
+
       title_contains: null,
       id_exact: null,
       title_or_author: null,
@@ -181,10 +181,12 @@ export default {
         .then(response => {
           this.loading = false
           this.queryset = response.data
+          this.error_msg = ''
         })
         .catch(error => {
           console.log(error)
           this.loading = false
+          this.error_msg = 'Problem połączenia z bazą danych'
         })
     }
   },
@@ -194,10 +196,12 @@ export default {
       .then(response => {
         this.loading = false
         this.queryset = response.data
+        this.error_msg = ''
       })
       .catch(error => {
         console.log(error)
         this.loading = false
+        this.error_msg = 'Problem połączenia z bazą danych'
       })
   }
 }
